@@ -1,0 +1,220 @@
+@model List<Domain.Entities.IM253E07Libro>
+@{
+    ViewData["Title"] = "Libros";
+}
+<a asp-action="Create" class="btn btn-success mb-2">Agregar libro</a>
+<h1>Libros</h1>
+
+<table id="librosTable" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Autor</th>
+            <th>Editorial</th>
+            <th>ISBN</th>
+            <th class="noExport">Foto</th>
+            <th class="noExport">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var l in Model)
+        {
+            <tr>
+                <td>@l.Autor</td>
+                <td>@l.Editorial</td>
+                <td>@l.ISBN</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(l.Foto))
+                    {
+                        <img src="@l.Foto" style="max-width:64px;max-height:64px;" />
+                    }
+                </td>
+                <td>
+                    <button type="button" class="btn btn-info btn-sm" data-libroid="@l.Id" data-bs-toggle="modal" data-bs-target="#detailsModal">
+                        Detalles
+                    </button>
+                    <a asp-action="Edit" asp-route-id="@l.Id" class="btn btn-warning btn-sm">Editar</a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-libroid="@l.Id">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center">No hay libros registrados.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal para Detalles -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Detalle del libro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+                Cargando...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para confirmar eliminación -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¿Borrar?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro que deseas eliminar este libro?
+            </div>
+            <div class="modal-footer">
+                <form id="deleteFormLibro" method="post">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- DataTables y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css"/>
+
+    <script>
+        // Inicializar DataTables
+        $(document).ready(function () {
+            $('#librosTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        text: 'Excel',
+                        className: 'btn btn-excel',
+                        exportOptions: { columns: ':not(.noExport)' }
+                    },
+                    {
+                        extend: 'pdf',
+                        text: 'PDF',
+                        className: 'btn btn-pdf',
+                        exportOptions: { columns: ':not(.noExport)' },
+                        customize: function (doc) {
+                            // Colores personalizados
+                            var pink = '#FFD6EC';   // rosa claro
+                            var mint = '#B9FBC0';   // verde menta
+                            var headerColor = '#FFAFCC'; // encabezado
+                            var borderColor = '#38f9d7';
+
+                            // Colorea encabezado
+                            doc.content[1].table.headerRows = 1;
+                            var headerCells = doc.content[1].table.body[0];
+                            for (var i = 0; i < headerCells.length; i++) {
+                                headerCells[i].fillColor = headerColor;
+                                headerCells[i].color = "#223843";
+                            }
+                            // Zebra (rosa/menta alternados)
+                            for (var i = 1; i < doc.content[1].table.body.length; i++) {
+                                var row = doc.content[1].table.body[i];
+                                var color = (i % 2 === 1) ? pink : mint;
+                                for (var j = 0; j < row.length; j++) {
+                                    row[j].fillColor = color;
+                                    row[j].color = "#223843";
+                                }
+                            }
+                            doc.styles.tableHeader = {
+                                fillColor: headerColor,
+                                color: '#223843',
+                                alignment: 'center',
+                                bold: true
+                            };
+                            doc.content[1].layout = {
+                                hLineColor: function () { return borderColor; },
+                                vLineColor: function () { return borderColor; }
+                            };
+                            doc.styles.title = {
+                                alignment: 'center',
+                                fontSize: 18,
+                                bold: true,
+                                margin: [0, 0, 0, 10]
+                            };
+                            // Columnas
+                            var widths = [];
+                            var colCount = doc.content[1].table.body[0].length;
+                            for (let w = 0; w < colCount; w++) widths.push("*");
+                            doc.content[1].table.widths = widths;
+                        },
+                        title: 'Libros - Biblioteca',
+                    }
+                ],
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json' }
+            });
+        });
+
+        // Cargar detalles en modal con AJAX
+        $('#detailsModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var libroId = button.data('libroid');
+            var modalBody = $('#detailsModalBody');
+
+            modalBody.html("Cargando...");
+
+            $.ajax({
+                url: '/Libros/Details/' + libroId,
+                type: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (html) {
+                    modalBody.html(html);
+                },
+                error: function () {
+                    modalBody.html("<div class='text-danger'>Error al cargar los detalles.</div>");
+                }
+            });
+        });
+
+        // Modal para eliminar libro
+        $('#confirmDeleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var libroId = button.data('libroid');
+            $('#deleteFormLibro').attr('action', '/Libros/Delete/' + libroId);
+        });
+    </script>
+}
+
+
+<style>
+.btn-excel {
+    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    color: #223843 !important;
+    border: none !important;
+    margin-right: 7px;
+}
+.btn-excel:hover, .btn-excel:focus {
+    background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+    color: #223843 !important;
+}
+
+.btn-pdf {
+    background: linear-gradient(90deg, #ffafcc 0%, #b9fbc0 100%);
+    color: #223843 !important;
+    border: none !important;
+}
+.btn-pdf:hover, .btn-pdf:focus {
+    background: linear-gradient(90deg, #b9fbc0 0%, #ffafcc 100%);
+    color: #223843 !important;
+}
+</style>

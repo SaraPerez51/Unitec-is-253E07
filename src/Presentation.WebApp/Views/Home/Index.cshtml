@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Hola Bienvenido";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4">
+        ¡Mba'echapa! Bienvenido a la Biblioteca Lokota 📚✨<br><br>
+        Aquí cada libro es una puerta abierta al conocimiento, la historia y la imaginación.<br>
+        Este es un espacio donde la sabiduría ancestral y el saber moderno se encuentran<br>
+        para inspirarte, enseñarte y acompañarte en cada página.<br><br>
+        Explora, aprende y deja que las palabras te guíen.<br><br>
+        ¡Jajotopata – hasta pronto en tu próxima lectura! 🌾📖
+    </h1>
+    <p class="lead">Administra tus Libros, Usuarios y Préstamos.</p>
+    <hr class="my-4" />
+    <div class="d-flex justify-content-center gap-4">
+        <a class="btn btn-primary btn-lg" asp-controller="Libros" asp-action="Index">Ver Libros</a>
+        <a class="btn btn-success btn-lg" asp-controller="Usuarios" asp-action="Index">Ver Usuarios</a>
+        <a class="btn btn-info btn-lg" asp-controller="Prestamos" asp-action="Index">Ver Préstamos</a>
+    </div>
+</div>

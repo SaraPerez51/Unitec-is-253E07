@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+
+body {
+  background-color: #f5f7fa;
+  font-family: 'Dancing Script', cursive;
+  color: #2c3e50;
+  margin-bottom: 60px;
+}
+
+/* Encabezado */
+.navbar {
+  background-color: #2ecc71; /* Verde menta */
+  padding: 1rem;
+}
+
+.navbar a {
+  color: white;
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+.navbar a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* Títulos */
+h1, .titulo {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  color: #2c3e50;
+}
+
+/* Botones */
+.btn-success {
+  background-color: #27ae60;
+  border-color: #27ae60;
+  color: white;
+}
+
+.btn-info {
+  background-color: #f39c12; /* Naranja (sustituto del azul) */
+  border-color: #f39c12;
+  color: white;
+}
+
+.btn-warning {
+  background-color: #e91e63; /* Rosa */
+  border-color: #e91e63;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #9b59b6; /* Morado lavanda (sustituto del rojo) */
+  border-color: #9b59b6;
+  color: white;
+}
+
+/* Botones redondeados */
+.btn {
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  opacity: 0.92;
+}
+
+/* Tabla */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table thead {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+}
+
+table td, table th {
+  padding: 14px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Formulario */
+input.form-control, select.form-control {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+input.form-control:focus {
+  border-color: #2980b9;
+  box-shadow: 0 0 0 0.2rem rgba(41, 128, 185, 0.25);
+}
+
+/* Pie de página */
+footer {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 1rem 0;
+  font-size: 0.85rem;
+}
+
